@@ -223,7 +223,7 @@ class UIController {
      * Update popular rates display
      */
     updatePopularRates() {
-        const popularRates = this.converter.getPop ularRates();
+        const popularRates = this.converter.getPopularRates();
         
         popularRates.forEach(rate => {
             const element = document.getElementById(rate.id);

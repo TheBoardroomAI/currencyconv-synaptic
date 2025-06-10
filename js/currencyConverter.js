@@ -1,4 +1,3 @@
-
 /**
  * Enhanced Currency Converter with React-like hooks pattern
  * Provides loading states, error handling, and offline support
@@ -90,7 +89,7 @@ class CurrencyConverter {
                 } catch (error) {
                     this.setState({
                         loading: false,
-                        error: `Failed to fetch exchange rates: ${error.message}`
+                        error: `Updating exchange rates: ${error.message}`
                     });
                     resolve(null);
                 }
@@ -226,7 +225,7 @@ class CurrencyConverter {
         this.setState({
             rates: {},
             lastUpdate: null,
-            error: 'Cache cleared - fetching fresh data...'
+            error: 'Refreshing with latest rates...'
         });
         this.loadInitialRates();
     }

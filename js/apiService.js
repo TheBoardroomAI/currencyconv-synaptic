@@ -21,17 +21,17 @@ class ExchangeRateAPIService {
         // Initialize event listeners
         this.initializeEventListeners();
         
-        // Initialize fallback rates
+        // Initialize fallback rates (updated June 2025)
         this.fallbackRates = {
-            'EUR': 0.85, 'GBP': 0.73, 'JPY': 110.0, 'AUD': 1.35,
-            'CAD': 1.25, 'CHF': 0.92, 'CNY': 6.45, 'INR': 74.5, 
-            'KRW': 1180.0, 'MXN': 20.5, 'SGD': 1.35, 'HKD': 7.8,
-            'NOK': 8.5, 'SEK': 8.8, 'DKK': 6.3, 'PLN': 3.9,
-            'CZK': 21.5, 'HUF': 310.0, 'RUB': 75.0, 'BRL': 5.2,
-            'ZAR': 14.8, 'TRY': 8.5, 'ILS': 3.2, 'AED': 3.67,
-            'SAR': 3.75, 'THB': 33.0, 'MYR': 4.2, 'IDR': 14500,
-            'PHP': 50.0, 'VND': 23000, 'EGP': 15.7, 'NGN': 410,
-            'KES': 110, 'GHS': 6.1, 'MAD': 9.0
+            'EUR': 0.876, 'GBP': 0.738, 'JPY': 156.2, 'AUD': 1.542,
+            'CAD': 1.384, 'CHF': 0.891, 'CNY': 7.245, 'INR': 83.12, 
+            'KRW': 1398.5, 'MXN': 18.75, 'SGD': 1.348, 'HKD': 7.785,
+            'NOK': 10.85, 'SEK': 10.42, 'DKK': 6.53, 'PLN': 4.12,
+            'CZK': 23.15, 'HUF': 385.2, 'RUB': 89.5, 'BRL': 5.48,
+            'ZAR': 18.25, 'TRY': 32.85, 'ILS': 3.68, 'AED': 3.673,
+            'SAR': 3.751, 'THB': 36.45, 'MYR': 4.685, 'IDR': 16125,
+            'PHP': 58.25, 'VND': 24850, 'EGP': 49.15, 'NGN': 1545,
+            'KES': 129.5, 'GHS': 15.85, 'MAD': 9.82
         };
     }
 

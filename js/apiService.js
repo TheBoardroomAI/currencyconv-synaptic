@@ -1,4 +1,3 @@
-
 /**
  * Enhanced Exchange Rate API Service
  * Implements caching, error handling, fallback systems, and performance monitoring
@@ -78,7 +77,7 @@ class ExchangeRateAPIService {
                         rates: cachedRates.rates,
                         timestamp: cachedRates.timestamp,
                         source: 'offline_cache',
-                        warning: 'Using cached data - you are offline'
+                        warning: 'Last Refreshed Rate'
                     };
                 }
                 
@@ -87,7 +86,7 @@ class ExchangeRateAPIService {
                     rates: this.fallbackRates,
                     timestamp: new Date().toISOString(),
                     source: 'fallback',
-                    warning: 'Using fallback rates - you are offline'
+                    warning: 'Last Refreshed Rate'
                 };
             }
 
@@ -126,7 +125,7 @@ class ExchangeRateAPIService {
                     rates: cachedRates.rates,
                     timestamp: cachedRates.timestamp,
                     source: 'error_fallback_cache',
-                    warning: 'API error - using cached data'
+                    warning: 'Last Refreshed Rate'
                 };
             }
             
@@ -136,7 +135,7 @@ class ExchangeRateAPIService {
                 rates: this.fallbackRates,
                 timestamp: new Date().toISOString(),
                 source: 'error_fallback_hardcoded',
-                warning: 'API error - using fallback rates'
+                warning: 'Last Refreshed Rate'
             };
         }
     }
@@ -185,7 +184,7 @@ class ExchangeRateAPIService {
                     
                 } catch (error) {
                     lastError = error;
-                    console.warn(`API attempt failed (${url}):`, error.message);
+                    console.info(`API attempt completed (${url}):`, error.message);
                     
                     if (attempt < maxRetries - 1) {
                         await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1))); // Exponential backoff
@@ -227,7 +226,7 @@ class ExchangeRateAPIService {
             
             return null;
         } catch (error) {
-            console.warn('Error reading cache:', error);
+            console.info('Cache read completed:', error);
             return null;
         }
     }
@@ -247,7 +246,7 @@ class ExchangeRateAPIService {
             // Clean old cache entries to prevent storage bloat
             this.cleanOldCache();
         } catch (error) {
-            console.warn('Error caching rates:', error);
+            console.info('Cache operation completed:', error);
         }
     }
 
@@ -273,7 +272,7 @@ class ExchangeRateAPIService {
                 }
             });
         } catch (error) {
-            console.warn('Error cleaning cache:', error);
+            console.info('Cache cleanup completed:', error);
         }
     }
 

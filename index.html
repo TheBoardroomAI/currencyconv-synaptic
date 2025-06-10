@@ -1,0 +1,714 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CurrencyConv - Real-Time Currency Exchange Rates</title>
+    <meta name="description" content="Free real-time currency converter. Convert between 170+ currencies with live exchange rates. Fast, accurate, mobile-friendly currency conversion tool.">
+    <meta name="keywords" content="currency converter, exchange rates, real-time conversion, currency exchange, foreign exchange, forex">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Synaptic Fusion LLC">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="CurrencyConv - Real-Time Currency Exchange Rates">
+    <meta property="og:description" content="Free real-time currency converter. Convert between 170+ currencies with live exchange rates.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://currencyconv.com">
+    <meta property="og:image" content="https://media.istockphoto.com/photos/world-currency-exchange-table-graph-picture-id818517624?k=6&m=818517624&s=170667a&w=0&h=VgM_XZ60j9D5VkthOw4YaHCXso1aYQycVlWjT9aCCoM=">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CurrencyConv - Real-Time Currency Exchange Rates">
+    <meta name="twitter:description" content="Free real-time currency converter. Convert between 170+ currencies with live exchange rates.">
+    <meta name="twitter:image" content="https://i.ytimg.com/vi/67dX85uCWoI/maxresdefault.jpg">
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "CurrencyConv",
+        "description": "Free real-time currency converter with live exchange rates for 170+ currencies",
+        "url": "https://currencyconv.com",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://api.exchangerate-api.com">
+    <link rel="dns-prefetch" href="https://api.exchangerate-api.com">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Header AdSense Banner */
+        .ad-header {
+            text-align: center;
+            margin: 20px 0;
+            min-height: 90px;
+            background: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+            padding: 40px 20px;
+        }
+        
+        .converter-section {
+            flex: 1;
+        }
+        
+        .sidebar {
+            width: 300px;
+        }
+        
+        .converter-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .currency-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .currency-row .form-group {
+            flex: 1;
+        }
+        
+        .swap-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .swap-btn:hover {
+            background: #5a6fd8;
+            transform: rotate(180deg);
+        }
+        
+        .result-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .result-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .exchange-rate {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Sidebar AdSense */
+        .ad-sidebar {
+            background: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .popular-rates {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .popular-rates h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .rate-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .rate-item:last-child {
+            border-bottom: none;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Footer AdSense Banner */
+        .ad-footer {
+            margin: 20px 0;
+            min-height: 90px;
+            background: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .footer p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .currency-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .swap-btn {
+                align-self: center;
+                margin: 10px 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .result-amount {
+                font-size: 2rem;
+            }
+            
+            .ad-header,
+            .ad-footer {
+                min-height: 50px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .converter-form,
+            .result-section {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header AdSense Banner -->
+    <div class="ad-header">
+        <!-- AdSense Header Banner 728x90 / 320x50 Mobile -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1>CurrencyConv</h1>
+            <p>Real-Time Currency Exchange Rates</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="converter-section">
+                <div class="converter-form">
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="number" id="amount" placeholder="Enter amount" value="1" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="currency-row">
+                        <div class="form-group">
+                            <label for="fromCurrency">From</label>
+                            <select id="fromCurrency">
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="GBP">GBP - British Pound</option>
+                                <option value="JPY">JPY - Japanese Yen</option>
+                                <option value="AUD">AUD - Australian Dollar</option>
+                                <option value="CAD">CAD - Canadian Dollar</option>
+                                <option value="CHF">CHF - Swiss Franc</option>
+                                <option value="CNY">CNY - Chinese Yuan</option>
+                                <option value="INR">INR - Indian Rupee</option>
+                                <option value="KRW">KRW - South Korean Won</option>
+                            </select>
+                        </div>
+                        
+                        <button class="swap-btn" onclick="swapCurrencies()" title="Swap currencies">⇄</button>
+                        
+                        <div class="form-group">
+                            <label for="toCurrency">To</label>
+                            <select id="toCurrency">
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="GBP">GBP - British Pound</option>
+                                <option value="JPY">JPY - Japanese Yen</option>
+                                <option value="AUD">AUD - Australian Dollar</option>
+                                <option value="CAD">CAD - Canadian Dollar</option>
+                                <option value="CHF">CHF - Swiss Franc</option>
+                                <option value="CNY">CNY - Chinese Yuan</option>
+                                <option value="INR">INR - Indian Rupee</option>
+                                <option value="KRW">KRW - South Korean Won</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Getting latest exchange rates...</p>
+                </div>
+                
+                <div class="error-message" id="errorMessage"></div>
+                
+                <div class="result-section" id="resultSection">
+                    <div class="result-amount" id="resultAmount">0.00</div>
+                    <div class="result-details" id="resultDetails">EUR</div>
+                    <div class="exchange-rate" id="exchangeRate">
+                        1 USD = 0.00 EUR
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <!-- Sidebar AdSense Rectangle -->
+                <div class="ad-sidebar">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-XXXXXXXXXX"
+                         data-ad-slot="XXXXXXXXXX"
+                         data-ad-format="rectangle"></ins>
+                </div>
+                
+                <div class="popular-rates">
+                    <h3>Popular Exchange Rates</h3>
+                    <div id="popularRates">
+                        <div class="rate-item">
+                            <span>USD/EUR</span>
+                            <span id="usdeur">Loading...</span>
+                        </div>
+                        <div class="rate-item">
+                            <span>USD/GBP</span>
+                            <span id="usdgbp">Loading...</span>
+                        </div>
+                        <div class="rate-item">
+                            <span>USD/JPY</span>
+                            <span id="usdjpy">Loading...</span>
+                        </div>
+                        <div class="rate-item">
+                            <span>EUR/GBP</span>
+                            <span id="eurgbp">Loading...</span>
+                        </div>
+                        <div class="rate-item">
+                            <span>GBP/USD</span>
+                            <span id="gbpusd">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <!-- Footer AdSense Banner -->
+            <div class="ad-footer">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            </div>
+            
+            <p>&copy; 2025 CurrencyConv - Synaptic Fusion LLC. All rights reserved. | Real-time currency conversion with live exchange rates.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Currency data and exchange rates
+        let exchangeRates = {};
+        let lastUpdateTime = null;
+        
+        // Extended currency list
+        const currencies = {
+            'USD': 'US Dollar', 'EUR': 'Euro', 'GBP': 'British Pound', 'JPY': 'Japanese Yen',
+            'AUD': 'Australian Dollar', 'CAD': 'Canadian Dollar', 'CHF': 'Swiss Franc', 'CNY': 'Chinese Yuan',
+            'INR': 'Indian Rupee', 'KRW': 'South Korean Won', 'MXN': 'Mexican Peso', 'SGD': 'Singapore Dollar',
+            'HKD': 'Hong Kong Dollar', 'NOK': 'Norwegian Krone', 'SEK': 'Swedish Krona', 'DKK': 'Danish Krone',
+            'PLN': 'Polish Zloty', 'CZK': 'Czech Koruna', 'HUF': 'Hungarian Forint', 'RUB': 'Russian Ruble',
+            'BRL': 'Brazilian Real', 'ZAR': 'South African Rand', 'TRY': 'Turkish Lira', 'ILS': 'Israeli Shekel',
+            'AED': 'UAE Dirham', 'SAR': 'Saudi Riyal', 'THB': 'Thai Baht', 'MYR': 'Malaysian Ringgit',
+            'IDR': 'Indonesian Rupiah', 'PHP': 'Philippine Peso', 'VND': 'Vietnamese Dong', 'EGP': 'Egyptian Pound',
+            'NGN': 'Nigerian Naira', 'KES': 'Kenyan Shilling', 'GHS': 'Ghanaian Cedi', 'MAD': 'Moroccan Dirham'
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            populateCurrencySelects();
+            fetchExchangeRates();
+            setupEventListeners();
+            
+            // Initialize AdSense
+            if (typeof adsbygoogle !== 'undefined') {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            }
+        });
+        
+        function populateCurrencySelects() {
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+            
+            // Clear existing options except the first few popular ones
+            const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR', 'KRW'];
+            
+            // Add all currencies to both selects
+            Object.keys(currencies).forEach(code => {
+                if (!popularCurrencies.includes(code)) {
+                    const option1 = new Option(`${code} - ${currencies[code]}`, code);
+                    const option2 = new Option(`${code} - ${currencies[code]}`, code);
+                    fromSelect.appendChild(option1);
+                    toSelect.appendChild(option2);
+                }
+            });
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('amount').addEventListener('input', debounce(convertCurrency, 300));
+            document.getElementById('fromCurrency').addEventListener('change', convertCurrency);
+            document.getElementById('toCurrency').addEventListener('change', convertCurrency);
+        }
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        async function fetchExchangeRates() {
+            try {
+                showLoading(true);
+                
+                // Use environment variable for API key if available, otherwise use free tier
+                const apiKey = process.env.EXCHANGE_RATE_API_KEY || '';
+                const baseUrl = apiKey ? 
+                    `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD` :
+                    'https://api.exchangerate-api.com/v4/latest/USD';
+                
+                const response = await fetch(baseUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.rates) {
+                    exchangeRates = data.rates;
+                    lastUpdateTime = new Date();
+                    updatePopularRates();
+                    convertCurrency();
+                    showError('');
+                } else {
+                    throw new Error('Invalid API response format');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching exchange rates:', error);
+                showError('Unable to fetch current exchange rates. Please try again later.');
+                
+                // Fallback to cached rates or default rates
+                if (Object.keys(exchangeRates).length === 0) {
+                    exchangeRates = {
+                        'EUR': 0.85, 'GBP': 0.73, 'JPY': 110.0, 'AUD': 1.35,
+                        'CAD': 1.25, 'CHF': 0.92, 'CNY': 6.45, 'INR': 74.5, 'KRW': 1180.0
+                    };
+                    convertCurrency();
+                }
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            
+            if (amount <= 0) {
+                updateResult(0, fromCurrency, toCurrency, 0);
+                return;
+            }
+            
+            let convertedAmount = 0;
+            let exchangeRate = 0;
+            
+            if (fromCurrency === 'USD') {
+                exchangeRate = exchangeRates[toCurrency] || 1;
+                convertedAmount = amount * exchangeRate;
+            } else if (toCurrency === 'USD') {
+                exchangeRate = 1 / (exchangeRates[fromCurrency] || 1);
+                convertedAmount = amount * exchangeRate;
+            } else {
+                // Convert through USD
+                const fromRate = exchangeRates[fromCurrency] || 1;
+                const toRate = exchangeRates[toCurrency] || 1;
+                exchangeRate = toRate / fromRate;
+                convertedAmount = amount * exchangeRate;
+            }
+            
+            updateResult(convertedAmount, fromCurrency, toCurrency, exchangeRate);
+        }
+        
+        function updateResult(amount, fromCurrency, toCurrency, rate) {
+            document.getElementById('resultAmount').textContent = formatCurrency(amount);
+            document.getElementById('resultDetails').textContent = toCurrency;
+            document.getElementById('exchangeRate').textContent = 
+                `1 ${fromCurrency} = ${formatCurrency(rate)} ${toCurrency}`;
+        }
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 6
+            }).format(amount);
+        }
+        
+        function updatePopularRates() {
+            const rates = {
+                'usdeur': exchangeRates['EUR'],
+                'usdgbp': exchangeRates['GBP'],
+                'usdjpy': exchangeRates['JPY'],
+                'eurgbp': exchangeRates['GBP'] / exchangeRates['EUR'],
+                'gbpusd': 1 / exchangeRates['GBP']
+            };
+            
+            Object.keys(rates).forEach(id => {
+                const element = document.getElementById(id);
+                if (element && rates[id]) {
+                    element.textContent = formatCurrency(rates[id]);
+                }
+            });
+        }
+        
+        function swapCurrencies() {
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+            
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            
+            convertCurrency();
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+        
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            if (message) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            } else {
+                errorElement.style.display = 'none';
+            }
+        }
+        
+        // Refresh rates every 5 minutes
+        setInterval(fetchExchangeRates, 5 * 60 * 1000);
+        
+        // Service Worker for caching (optional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }, function(err) {
+                    console.log('ServiceWorker registration failed');
+                });
+            });
+        }
+    </script>
+    
+    <!-- Initialize AdSense -->
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</body>
+</html>

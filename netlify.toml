@@ -1,17 +1,29 @@
-# example netlify.toml
+
 [build]
-  command = "hugo"
-  functions = "netlify/functions"
-  publish = "public"
+  publish = "."
+  command = "echo 'Static site - no build required'"
 
 [build.environment]
-  HUGO_VERSION = "0.146.5"
+  EXCHANGE_RATE_API_KEY = ""
 
-[[plugins]]
-  package = "netlify-plugin-cypress"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://api.exchangerate-api.com https://v6.exchangerate-api.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.exchangerate-api.com https://v6.exchangerate-api.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com"
 
-  [plugins.inputs.postBuild]
-    enable = true
+[[redirects]]
+  from = "/hugo/*"
+  to = "/"
+  status = 301
 
-  [plugins.inputs]
-    enable = false
+[[redirects]]
+  from = "/themes/*"
+  to = "/"
+  status = 301
+
+[context.production.environment]
+  EXCHANGE_RATE_API_KEY = ""

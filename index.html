@@ -44,6 +44,11 @@
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://api.exchangerate-api.com">
     <link rel="dns-prefetch" href="https://api.exchangerate-api.com">
+    <link rel="preconnect" href="https://open.er-api.com">
+    <link rel="dns-prefetch" href="https://open.er-api.com">
+    
+    <!-- Enhanced styles -->
+    <link rel="stylesheet" href="css/enhanced-styles.css">
     
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
@@ -492,207 +497,21 @@
         </footer>
     </div>
 
+    <!-- Enhanced API Service Scripts -->
+    <script src="js/apiService.js"></script>
+    <script src="js/currencyConverter.js"></script>
+    <script src="js/ui.js"></script>
+    
     <script>
-        // Currency data and exchange rates
-        let exchangeRates = {};
-        let lastUpdateTime = null;
-        
-        // Extended currency list
-        const currencies = {
-            'USD': 'US Dollar', 'EUR': 'Euro', 'GBP': 'British Pound', 'JPY': 'Japanese Yen',
-            'AUD': 'Australian Dollar', 'CAD': 'Canadian Dollar', 'CHF': 'Swiss Franc', 'CNY': 'Chinese Yuan',
-            'INR': 'Indian Rupee', 'KRW': 'South Korean Won', 'MXN': 'Mexican Peso', 'SGD': 'Singapore Dollar',
-            'HKD': 'Hong Kong Dollar', 'NOK': 'Norwegian Krone', 'SEK': 'Swedish Krona', 'DKK': 'Danish Krone',
-            'PLN': 'Polish Zloty', 'CZK': 'Czech Koruna', 'HUF': 'Hungarian Forint', 'RUB': 'Russian Ruble',
-            'BRL': 'Brazilian Real', 'ZAR': 'South African Rand', 'TRY': 'Turkish Lira', 'ILS': 'Israeli Shekel',
-            'AED': 'UAE Dirham', 'SAR': 'Saudi Riyal', 'THB': 'Thai Baht', 'MYR': 'Malaysian Ringgit',
-            'IDR': 'Indonesian Rupiah', 'PHP': 'Philippine Peso', 'VND': 'Vietnamese Dong', 'EGP': 'Egyptian Pound',
-            'NGN': 'Nigerian Naira', 'KES': 'Kenyan Shilling', 'GHS': 'Ghanaian Cedi', 'MAD': 'Moroccan Dirham'
-        };
-        
-        // Initialize the application
+        // Initialize AdSense when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            populateCurrencySelects();
-            fetchExchangeRates();
-            setupEventListeners();
-            
             // Initialize AdSense
             if (typeof adsbygoogle !== 'undefined') {
                 (adsbygoogle = window.adsbygoogle || []).push({});
             }
         });
         
-        function populateCurrencySelects() {
-            const fromSelect = document.getElementById('fromCurrency');
-            const toSelect = document.getElementById('toCurrency');
-            
-            // Clear existing options except the first few popular ones
-            const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR', 'KRW'];
-            
-            // Add all currencies to both selects
-            Object.keys(currencies).forEach(code => {
-                if (!popularCurrencies.includes(code)) {
-                    const option1 = new Option(`${code} - ${currencies[code]}`, code);
-                    const option2 = new Option(`${code} - ${currencies[code]}`, code);
-                    fromSelect.appendChild(option1);
-                    toSelect.appendChild(option2);
-                }
-            });
-        }
-        
-        function setupEventListeners() {
-            document.getElementById('amount').addEventListener('input', debounce(convertCurrency, 300));
-            document.getElementById('fromCurrency').addEventListener('change', convertCurrency);
-            document.getElementById('toCurrency').addEventListener('change', convertCurrency);
-        }
-        
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-        
-        async function fetchExchangeRates() {
-            try {
-                showLoading(true);
-                
-                // Use environment variable for API key if available, otherwise use free tier
-                const apiKey = process.env.EXCHANGE_RATE_API_KEY || '';
-                const baseUrl = apiKey ? 
-                    `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD` :
-                    'https://api.exchangerate-api.com/v4/latest/USD';
-                
-                const response = await fetch(baseUrl);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.rates) {
-                    exchangeRates = data.rates;
-                    lastUpdateTime = new Date();
-                    updatePopularRates();
-                    convertCurrency();
-                    showError('');
-                } else {
-                    throw new Error('Invalid API response format');
-                }
-                
-            } catch (error) {
-                console.error('Error fetching exchange rates:', error);
-                showError('Unable to fetch current exchange rates. Please try again later.');
-                
-                // Fallback to cached rates or default rates
-                if (Object.keys(exchangeRates).length === 0) {
-                    exchangeRates = {
-                        'EUR': 0.85, 'GBP': 0.73, 'JPY': 110.0, 'AUD': 1.35,
-                        'CAD': 1.25, 'CHF': 0.92, 'CNY': 6.45, 'INR': 74.5, 'KRW': 1180.0
-                    };
-                    convertCurrency();
-                }
-            } finally {
-                showLoading(false);
-            }
-        }
-        
-        function convertCurrency() {
-            const amount = parseFloat(document.getElementById('amount').value) || 0;
-            const fromCurrency = document.getElementById('fromCurrency').value;
-            const toCurrency = document.getElementById('toCurrency').value;
-            
-            if (amount <= 0) {
-                updateResult(0, fromCurrency, toCurrency, 0);
-                return;
-            }
-            
-            let convertedAmount = 0;
-            let exchangeRate = 0;
-            
-            if (fromCurrency === 'USD') {
-                exchangeRate = exchangeRates[toCurrency] || 1;
-                convertedAmount = amount * exchangeRate;
-            } else if (toCurrency === 'USD') {
-                exchangeRate = 1 / (exchangeRates[fromCurrency] || 1);
-                convertedAmount = amount * exchangeRate;
-            } else {
-                // Convert through USD
-                const fromRate = exchangeRates[fromCurrency] || 1;
-                const toRate = exchangeRates[toCurrency] || 1;
-                exchangeRate = toRate / fromRate;
-                convertedAmount = amount * exchangeRate;
-            }
-            
-            updateResult(convertedAmount, fromCurrency, toCurrency, exchangeRate);
-        }
-        
-        function updateResult(amount, fromCurrency, toCurrency, rate) {
-            document.getElementById('resultAmount').textContent = formatCurrency(amount);
-            document.getElementById('resultDetails').textContent = toCurrency;
-            document.getElementById('exchangeRate').textContent = 
-                `1 ${fromCurrency} = ${formatCurrency(rate)} ${toCurrency}`;
-        }
-        
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 6
-            }).format(amount);
-        }
-        
-        function updatePopularRates() {
-            const rates = {
-                'usdeur': exchangeRates['EUR'],
-                'usdgbp': exchangeRates['GBP'],
-                'usdjpy': exchangeRates['JPY'],
-                'eurgbp': exchangeRates['GBP'] / exchangeRates['EUR'],
-                'gbpusd': 1 / exchangeRates['GBP']
-            };
-            
-            Object.keys(rates).forEach(id => {
-                const element = document.getElementById(id);
-                if (element && rates[id]) {
-                    element.textContent = formatCurrency(rates[id]);
-                }
-            });
-        }
-        
-        function swapCurrencies() {
-            const fromSelect = document.getElementById('fromCurrency');
-            const toSelect = document.getElementById('toCurrency');
-            
-            const temp = fromSelect.value;
-            fromSelect.value = toSelect.value;
-            toSelect.value = temp;
-            
-            convertCurrency();
-        }
-        
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'block' : 'none';
-        }
-        
-        function showError(message) {
-            const errorElement = document.getElementById('errorMessage');
-            if (message) {
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-            } else {
-                errorElement.style.display = 'none';
-            }
-        }
-        
-        // Refresh rates every 5 minutes
-        setInterval(fetchExchangeRates, 5 * 60 * 1000);
-        
-        // Service Worker for caching (optional)
+        // Service Worker for enhanced caching
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {
@@ -702,6 +521,29 @@
                 });
             });
         }
+        
+        // Global error handler for better debugging
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'javascript_error', {
+                    'error_message': e.error?.message || 'Unknown error',
+                    'error_filename': e.filename,
+                    'error_lineno': e.lineno
+                });
+            }
+        });
+        
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            // Report page load time
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'page_load_time', {
+                    'custom_parameter': loadTime
+                });
+            }
+        });
     </script>
     
     <!-- Initialize AdSense -->

@@ -1,4 +1,3 @@
-
 /**
  * Enhanced UI Controller with loading states and user feedback
  */
@@ -134,7 +133,7 @@ class UIController {
             const result = await this.converter.convertCurrency(amount, fromCurrency, toCurrency);
             this.updateResult(result, fromCurrency, toCurrency);
         } catch (error) {
-            this.showError(`Conversion failed: ${error.message}`);
+            this.showError(`Updating conversion: ${error.message}`);
         } finally {
             this.showConversionLoading(false);
         }
@@ -265,8 +264,8 @@ class UIController {
             this.elements.errorMessage.textContent = message;
             this.elements.errorMessage.style.display = 'block';
             
-            // Auto-hide non-critical errors after 5 seconds
-            if (!message.includes('failed') && !message.includes('error')) {
+            // Auto-hide status messages after 5 seconds
+            if (message.includes('Refreshing') || message.includes('Updating') || message.includes('Last Refreshed')) {
                 setTimeout(() => {
                     if (this.elements.errorMessage.textContent === message) {
                         this.elements.errorMessage.style.display = 'none';
@@ -356,9 +355,9 @@ class UIController {
             'api': '🌐 Live data',
             'cache': '💾 Cached data',
             'offline_cache': '📱 Offline cache',
-            'fallback': '⚠️ Fallback rates',
-            'error_fallback_cache': '⚠️ Error - cached data',
-            'error_fallback_hardcoded': '❌ Error - fallback rates'
+            'fallback': '🔄 Last Refreshed Rate',
+            'error_fallback_cache': '🔄 Last Refreshed Rate',
+            'error_fallback_hardcoded': '🔄 Last Refreshed Rate'
         };
 
         indicator.textContent = sourceLabels[source] || source;

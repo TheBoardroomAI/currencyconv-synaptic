@@ -2,6 +2,21 @@
 [build]
   publish = "."
   command = "echo 'Static site - no build required'"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF"
+
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = false
+  minify = false
+
+[build.processing.js]
+  bundle = false
+  minify = false
+
+[build.processing.html]
+  pretty_urls = false
 
 [build.environment]
   EXCHANGE_RATE_API_KEY = ""
